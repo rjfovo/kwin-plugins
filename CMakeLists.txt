@@ -4,6 +4,7 @@ project(cutefish-kwin-plugins)
 
 set(PROJECT_NAME "cutefish-kwin")
 
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)

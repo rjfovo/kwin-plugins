@@ -166,8 +166,9 @@ static KWin::GLShader *getShader()
     stream.flush();
 
     auto shader = KWin::ShaderManager::instance()->generateCustomShader(traits, QByteArray(), source);
+
     //shaders.insert(direction, shader);
-    return shader;
+    return shader.get();
 }
 
 static KWin::GLTexture *getTexture(int borderRadius)
@@ -232,7 +233,7 @@ bool RoundedWindow::supported()
     if (desktop.isEmpty())
         return false;
 
-    return desktop == "Cutefish" && KWin::effects->isOpenGLCompositing() && KWin::GLRenderTarget::supported();
+    return desktop == "Cutefish" && KWin::effects->isOpenGLCompositing() && KWin::GLFramebuffer::supported();
 }
 
 bool RoundedWindow::enabledByDefault()
@@ -270,9 +271,10 @@ bool RoundedWindow::isMaximized(KWin::EffectWindow *w)
 
 void RoundedWindow::drawWindow(KWin::EffectWindow *w, int mask, const QRegion &region, KWin::WindowPaintData &data)
 {
-    if (!w->isPaintingEnabled() || ((mask & PAINT_WINDOW_LANCZOS))) {
-        return KWin::Effect::drawWindow(w, mask, region, data);
-    }
+    // TO-DO:目前只为编译通过进行更改
+    // if (!w->isPaintingEnabled() || ((mask & PAINT_WINDOW_LANCZOS))) {
+    //     return KWin::Effect::drawWindow(w, mask, region, data);
+    // }
 
     if (isMaximized(w)) {
         return KWin::Effect::drawWindow(w, mask, region, data);
@@ -295,12 +297,13 @@ void RoundedWindow::drawWindow(KWin::EffectWindow *w, int mask, const QRegion &r
             return KWin::Effect::drawWindow(w, mask, region, data);
     }
 
-    // 设置 alpha 通道混合
-    if (!w->hasAlpha()) {
-        if (setDepthfunc) {
-            setDepthfunc(w->parent(), 32);
-        }
-    }
+    // TO-DO:目前只为编译通过进行更改
+    // // 设置 alpha 通道混合
+    // if (!w->hasAlpha()) {
+    //     if (setDepthfunc) {
+    //         setDepthfunc(w->parent(), 32);
+    //     }
+    // }
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -331,30 +334,31 @@ void RoundedWindow::drawWindow(KWin::EffectWindow *w, int mask, const QRegion &r
     glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
     glActiveTexture(GL_TEXTURE0);
 
-    KWin::GLShader *oldShader = data.shader;
-    data.shader = m_shader;
-    KWin::ShaderManager::instance()->pushShader(m_shader);
+    // TO-DO:目前只为编译通过进行更改
+    // KWin::GLShader *oldShader = data.shader;
+    // data.shader = m_shader;
+    // KWin::ShaderManager::instance()->pushShader(m_shader);
 
-    m_shader->setUniform("topleft", 10);
-    m_shader->setUniform("scale", QVector2D(w->width() * 1.0 / textureTopLeft->width(),
-                                               w->height() * 1.0 / textureTopLeft->height()));
+    // m_shader->setUniform("topleft", 10);
+    // m_shader->setUniform("scale", QVector2D(w->width() * 1.0 / textureTopLeft->width(),
+    //                                            w->height() * 1.0 / textureTopLeft->height()));
 
-    m_shader->setUniform("topright", 11);
-    m_shader->setUniform("scale1", QVector2D(w->width() * 1.0 / textureTopRight->width(),
-                                                w->height() * 1.0 / textureTopRight->height()));
+    // m_shader->setUniform("topright", 11);
+    // m_shader->setUniform("scale1", QVector2D(w->width() * 1.0 / textureTopRight->width(),
+    //                                             w->height() * 1.0 / textureTopRight->height()));
 
-    m_shader->setUniform("bottomleft", 12);
-    m_shader->setUniform("scale2", QVector2D(w->width() * 1.0 / textureBottomLeft->width(),
-                                                w->height() * 1.0 / textureBottomLeft->height()));
+    // m_shader->setUniform("bottomleft", 12);
+    // m_shader->setUniform("scale2", QVector2D(w->width() * 1.0 / textureBottomLeft->width(),
+    //                                             w->height() * 1.0 / textureBottomLeft->height()));
 
-    m_shader->setUniform("bottomright", 13);
-    m_shader->setUniform("scale3", QVector2D(w->width() * 1.0 / textureBottomRight->width(),
-                                                w->height() * 1.0 / textureBottomRight->height()));
+    // m_shader->setUniform("bottomright", 13);
+    // m_shader->setUniform("scale3", QVector2D(w->width() * 1.0 / textureBottomRight->width(),
+    //                                             w->height() * 1.0 / textureBottomRight->height()));
 
-    KWin::Effect::drawWindow(w, mask, region, data);
-    KWin::ShaderManager::instance()->popShader();
+    // KWin::Effect::drawWindow(w, mask, region, data);
+    // KWin::ShaderManager::instance()->popShader();
 
-    data.shader = oldShader;
+    // data.shader = oldShader;
 
     glActiveTexture(GL_TEXTURE10);
     textureTopLeft->unbind();
