@@ -1,8 +1,8 @@
-find_package(KF5CoreAddons)
-find_package(KF5Config)
-find_package(KF5WindowSystem)
+find_package(KF6CoreAddons)
+find_package(KF6Config)
+find_package(KF6WindowSystem)
 
-find_path(EFFECTS_H kwineffects.h PATH_SUFFIXES kf5)
+find_path(EFFECTS_H kwineffects.h PATH_SUFFIXES kf6)
 
 if (EFFECTS_H)
     include_directories(${EFFECTS_H})
@@ -10,8 +10,8 @@ else (EFFECTS_H)
     message(STATUS "didnt find kwineffects.h, not building effects")
 endif (EFFECTS_H)
 
-find_library(KWIN_EFFECTS NAMES kwineffects PATH_SUFFIXES kf5)
-find_library(KWIN_GLUTILS NAMES kwinglutils PATH_SUFFIXES kf5)
+find_library(KWIN_EFFECTS NAMES kwineffects PATH_SUFFIXES kf6)
+find_library(KWIN_GLUTILS NAMES kwinglutils PATH_SUFFIXES kf6)
 find_library(OPENGL NAMES GL)
 
 if (NOT KWIN_EFFECTS)
@@ -38,12 +38,12 @@ add_library(roundedwindow MODULE
 
 target_link_libraries(roundedwindow
     PUBLIC
-        Qt5::Core
-        Qt5::Gui
+        Qt6::Core
+        Qt6::Gui
     PRIVATE
-        KF5::CoreAddons
-        KF5::ConfigCore
-        KF5::WindowSystem
+        KF6::CoreAddons
+        KF6::ConfigCore
+        KF6::WindowSystem
 )
 
 install (TARGETS roundedwindow DESTINATION ${QT_PLUGINS_DIR}/kwin/effects/plugins)

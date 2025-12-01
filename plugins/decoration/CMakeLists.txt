@@ -1,11 +1,11 @@
 project (cutefishdecoration)
 set(CMAKE_CXX_STANDARD 11)
 
-find_package(KF5CoreAddons REQUIRED)
-find_package(KF5Config REQUIRED)
-find_package(KF5WindowSystem REQUIRED)
+find_package(KF6CoreAddons REQUIRED)
+find_package(KF6Config REQUIRED)
+find_package(KF6WindowSystem REQUIRED)
 find_package(KDecoration2 REQUIRED)
-find_package(Qt5 CONFIG REQUIRED COMPONENTS Gui Widgets Core X11Extras)
+find_package(Qt6 CONFIG REQUIRED COMPONENTS Gui Widgets Core X11Extras)
 
 set (decoration_SRCS
     decoration.cpp
@@ -20,14 +20,14 @@ add_library (cutefishdecoration MODULE
 
 target_link_libraries (cutefishdecoration
     PUBLIC
-        Qt5::Core
-        Qt5::Gui
-        Qt5::Widgets
-        Qt5::X11Extras
-        KF5::ConfigCore
-        KF5::ConfigGui
-        KF5::CoreAddons
-        KF5::WindowSystem
+        Qt6::Core
+        Qt6::Gui
+        Qt6::Widgets
+        Qt6::X11Extras
+        KF6::ConfigCore
+        KF6::ConfigGui
+        KF6::CoreAddons
+        KF6::WindowSystem
 
     PRIVATE
         KDecoration2::KDecoration
