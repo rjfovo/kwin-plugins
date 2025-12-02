@@ -26,4 +26,16 @@ endif()
 
 # add_subdirectory(blur)
 add_subdirectory(decoration)
-add_subdirectory(roundedwindow)
+
+# Check if we have the required libraries for roundedwindow
+find_path(EFFECTS_H kwineffects.h PATH_SUFFIXES kf6)
+find_library(KWIN_EFFECTS NAMES kwineffects PATH_SUFFIXES kf6)
+find_library(KWIN_GLUTILS NAMES kwinglutils PATH_SUFFIXES kf6)
+find_library(OPENGL NAMES GL)
+
+if (EFFECTS_H AND KWIN_EFFECTS AND KWIN_GLUTILS AND OPENGL)
+    message(STATUS "Found KWin effects libraries, building roundedwindow plugin")
+    add_subdirectory(roundedwindow)
+else()
+    message(STATUS "KWin effects libraries not found, skipping roundedwindow plugin")
+endif()

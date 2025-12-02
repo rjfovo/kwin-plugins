@@ -20,17 +20,17 @@
 #ifndef BUTTON_H
 #define BUTTON_H
 
-#include <KDecoration2/DecorationButton>
+#include <KDecoration3/DecorationButton>
 
-class Button : KDecoration2::DecorationButton
+class Button : KDecoration3::DecorationButton
 {
 public:
-    explicit Button(KDecoration2::DecorationButtonType type, const QPointer<KDecoration2::Decoration> &decoration, QObject *parent = nullptr);
+    explicit Button(KDecoration3::DecorationButtonType type, const QPointer<KDecoration3::Decoration> &decoration, QObject *parent = nullptr);
 
-    static DecorationButton *create(KDecoration2::DecorationButtonType type, KDecoration2::Decoration *decoration, QObject *parent);
+    static DecorationButton *create(KDecoration3::DecorationButtonType type, KDecoration3::Decoration *decoration, QObject *parent);
 
 protected:
-    void paint(QPainter *painter, const QRect &repaintRegion) override;
+    void paint(QPainter *painter, const QRectF &repaintRegion) override;
 };
 
 #endif // BUTTON_H

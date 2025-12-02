@@ -20,31 +20,31 @@
 #include "button.h"
 #include "decoration.h"
 
-#include <KDecoration2/DecoratedClient>
-#include <KDecoration2/Decoration>
+#include <KDecoration3/DecoratedWindow>
+#include <KDecoration3/Decoration>
 
 #include <QPainter>
 #include <QPainterPath>
 
-Button::Button(KDecoration2::DecorationButtonType type, const QPointer<KDecoration2::Decoration> &decoration, QObject *parent)
-    : KDecoration2::DecorationButton(type, decoration, parent)
+Button::Button(KDecoration3::DecorationButtonType type, const QPointer<KDecoration3::Decoration> &decoration, QObject *parent)
+    : KDecoration3::DecorationButton(type, decoration, parent)
 {
-    auto c = decoration->client().toStrongRef().data();
+    auto c = decoration->window();
 
     switch (type) {
-    case KDecoration2::DecorationButtonType::Menu:
+    case KDecoration3::DecorationButtonType::Menu:
         break;
-    case KDecoration2::DecorationButtonType::Minimize:
+    case KDecoration3::DecorationButtonType::Minimize:
         setVisible(c->isMinimizeable());
-        connect(c, &KDecoration2::DecoratedClient::minimizeableChanged, this, &Button::setVisible);
+        connect(c, &KDecoration3::DecoratedWindow::minimizeableChanged, this, &Button::setVisible);
         break;
-    case KDecoration2::DecorationButtonType::Maximize:
+    case KDecoration3::DecorationButtonType::Maximize:
         setVisible(c->isMaximizeable());
-        connect(c, &KDecoration2::DecoratedClient::maximizeableChanged, this, &Button::setVisible);
+        connect(c, &KDecoration3::DecoratedWindow::maximizeableChanged, this, &Button::setVisible);
         break;
-    case KDecoration2::DecorationButtonType::Close:
+    case KDecoration3::DecorationButtonType::Close:
         setVisible(c->isCloseable());
-        connect(c, &KDecoration2::DecoratedClient::closeableChanged, this, &Button::setVisible);
+        connect(c, &KDecoration3::DecoratedWindow::closeableChanged, this, &Button::setVisible);
         break;
     default:
         setVisible(false);
@@ -52,12 +52,12 @@ Button::Button(KDecoration2::DecorationButtonType type, const QPointer<KDecorati
     }
 }
 
-KDecoration2::DecorationButton *Button::create(KDecoration2::DecorationButtonType type, KDecoration2::Decoration *decoration, QObject *parent)
+KDecoration3::DecorationButton *Button::create(KDecoration3::DecorationButtonType type, KDecoration3::Decoration *decoration, QObject *parent)
 {
     return new Button(type, decoration, parent);
 }
 
-void Button::paint(QPainter *painter, const QRect &repaintRegion)
+void Button::paint(QPainter *painter, const QRectF &repaintRegion)
 {
     Q_UNUSED(repaintRegion)
 
@@ -66,7 +66,7 @@ void Button::paint(QPainter *painter, const QRect &repaintRegion)
     if (!decoration)
         return;
 
-    auto c = decoration->client().toStrongRef().data();
+    auto c = decoration->window();
     const bool isDarkMode = decoration->darkMode();
     const QRect &rect = geometry().toRect();
 
@@ -90,25 +90,25 @@ void Button::paint(QPainter *painter, const QRect &repaintRegion)
     }
 
     switch (type()) {
-    case KDecoration2::DecorationButtonType::Menu: {
+    case KDecoration3::DecorationButtonType::Menu: {
         c->icon().paint(painter, rect);
         break;
     }
-    case KDecoration2::DecorationButtonType::ApplicationMenu: {
+    case KDecoration3::DecorationButtonType::ApplicationMenu: {
         break;
     }
-    case KDecoration2::DecorationButtonType::Minimize: {
+    case KDecoration3::DecorationButtonType::Minimize: {
         painter->drawPixmap(imgRect, decoration->minimizeBtnPixmap());
         break;
     }
-    case KDecoration2::DecorationButtonType::Maximize: {
+    case KDecoration3::DecorationButtonType::Maximize: {
         if (isChecked())
             painter->drawPixmap(imgRect, decoration->restoreBtnPixmap());
         else
             painter->drawPixmap(imgRect, decoration->maximizeBtnPixmap());
         break;
     }
-    case KDecoration2::DecorationButtonType::Close: {
+    case KDecoration3::DecorationButtonType::Close: {
         painter->drawPixmap(imgRect, decoration->closeBtnPixmap());
         break;
     }
