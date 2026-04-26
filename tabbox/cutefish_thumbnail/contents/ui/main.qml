@@ -3,9 +3,6 @@ import QtQuick.Window 6.0
 import QtQuick.Controls 6.0
 import QtQuick.Layouts 6.0
 
-import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.components 2.0 as PlasmaComponents
-import org.kde.kquickcontrolsaddons 2.0
 import org.kde.kwin 2.0 as KWin
 
 import FishUI 1.0 as FishUI
@@ -184,13 +181,13 @@ KWin.Switcher {
                         anchors.fill: parent
                         anchors.margins: 16
 
-                        QIconItem {
+                        Image {
                             id: iconItem
-                            // source: model.icon
-                            icon: model.icon
+                            source: model.icon
                             width: parent.height * 0.5
                             height: parent.height * 0.5
-                            state: index == thumbnailGridView.currentIndex ? QIconItem.ActiveState : QIconItem.DefaultState
+                            sourceSize.width: width
+                            sourceSize.height: height
                             Layout.alignment: Qt.AlignHCenter
                         }
 
