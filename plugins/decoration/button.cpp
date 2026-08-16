@@ -74,12 +74,13 @@ void Button::paint(QPainter *painter, const QRectF &repaintRegion)
     painter->setRenderHint(QPainter::SmoothPixmapTransform, false);
     painter->setRenderHints(QPainter::Antialiasing, true);
 
-    QRect btnRect(0, 0, 26 * decoration->devicePixelRatio(),
-                        26 * decoration->devicePixelRatio());
+    // KDecoration3 的绘制坐标系是设备无关像素，按钮 DIP 尺寸不能再乘 PixelRatio。
+    // 图标 pixmap 本身已按 fromSvgToPixmap(size * devicePixelRatio) 生成物理像素，
+    // 绘制到 24x24 的 DIP 区域即可 1:1 对齐。
+    QRect btnRect(0, 0, 26, 26);
     btnRect.moveCenter(rect.center());
 
-    QRect imgRect(0, 0, 24 * decoration->devicePixelRatio(),
-                        24 * decoration->devicePixelRatio());
+    QRect imgRect(0, 0, 24, 24);
     imgRect.moveCenter(rect.center());
 
     if (isHovered() || isPressed()) {

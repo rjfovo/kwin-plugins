@@ -2,7 +2,9 @@
 OpenGLIsUnsafe=false
 
 [Plugins]
-blurEnabled=true
+# 关闭 blur：无 GPU 加速/虚拟机环境下，拉伸窗口时 blur 每帧重模糊大片背景，
+# 是窗口拉伸抖动闪烁的主要来源（decoration 阴影缩小后仍建议保持关闭）。
+blurEnabled=false
 kwin4_effect_fadingpopupsEnabled=false
 kwin4_effect_dialogparentEnabled=true
 

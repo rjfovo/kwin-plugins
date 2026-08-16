@@ -5,10 +5,10 @@
         "Id": "org.cutefish.decoration",
         "Name": "CutefishOS Window Frame",
         "ServiceTypes": [
-            "org.kde.kdecoration2"
+            "org.kde.kdecoration3"
         ]
     },
-    "org.kde.kdecoration2": {
+    "org.kde.kdecoration3": {
         "blur": false
     }
 }

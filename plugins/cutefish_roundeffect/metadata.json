@@ -1,0 +1,11 @@
+{
+    "KPlugin": {
+        "Id": "cutefish_roundeffect",
+        "Name": "Cutefish Round Effect",
+        "Description": "Rounded corners on frameless windows",
+        "EnabledByDefault": true,
+        "ServiceTypes": [
+            "KWin/Effect"
+        ]
+    }
+}

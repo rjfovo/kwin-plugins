@@ -105,8 +105,12 @@ bool Decoration::init()
     auto c = window();
     auto s = settings();
 
-    m_devicePixelRatio = m_settings->value("PixelRatio", 1.0).toReal();
-    m_frameRadius = 11 * m_devicePixelRatio;
+    // KDecoration3: 按钮图标等位图按 KWin 实际渲染 scale 生成。
+    // KWin6 下装饰以设备无关像素工作，不再读取 cutefishos 的 PixelRatio 手动设置（KWin5 时代做法）。
+    m_devicePixelRatio = window()->scale();
+    // KDecoration3 的所有几何都是设备无关像素，KWin 内部已按窗口实际 scale 渲染。
+    // 这里不能再乘 PixelRatio，否则 HiDPI 下圆角、标题栏会双重放大，拉伸时错位抖动。
+    m_frameRadius = 11;
 
     reconfigure();
     updateTitleBar();
@@ -139,12 +143,23 @@ bool Decoration::init()
         update(titleBar());
     });
 
-    connect(c, &KDecoration3::DecoratedWindow::widthChanged, this, &Decoration::updateTitleBar);
+    // KDecoration3: 窗口跨屏移动 / DPI 变化时，按新 scale 重新生成按钮图标并重绘
+    connect(c, &KDecoration3::DecoratedWindow::scaleChanged, this, [this] {
+        m_devicePixelRatio = window()->scale();
+        updateBtnPixmap();
+        update(titleBar());
+    });
+
+    // 拉伸窗口时 widthChanged 会高频触发。这里合并为单个回调，
+    // 避免两个独立槽各自触发一次 KWin 状态变更与重绘，缓解拉伸时的抖动闪烁。
+    connect(c, &KDecoration3::DecoratedWindow::widthChanged, this, [this] {
+        updateTitleBar();
+        updateButtonsGeometry();
+    });
 
     connect(c, &KDecoration3::DecoratedWindow::maximizedChanged, this, &Decoration::updateTitleBar);
     connect(c, &KDecoration3::DecoratedWindow::maximizedChanged, this, &Decoration::updateButtonsGeometry);
 
-    connect(c, &KDecoration3::DecoratedWindow::widthChanged, this, &Decoration::updateButtonsGeometry);
     connect(c, &KDecoration3::DecoratedWindow::adjacentScreenEdgesChanged, this, &Decoration::updateButtonsGeometry);
     connect(c, &KDecoration3::DecoratedWindow::shadedChanged, this, &Decoration::updateButtonsGeometry);
 
@@ -152,7 +167,7 @@ bool Decoration::init()
     m_fileWatcher->addPath(m_settingsFile);
     connect(m_fileWatcher, &QFileSystemWatcher::fileChanged, this, [=] {
         m_settings->sync();
-        m_devicePixelRatio = m_settings->value("PixelRatio", 1.0).toReal();
+        // 注意：scale 变化不由这里处理，见 scaleChanged 信号连接。
 
         updateBtnPixmap();
         update(titleBar());
@@ -257,7 +272,9 @@ void Decoration::updateShadow()
     // assign global shadow if exists and parameters match
     if (!g_sShadow) {
         // assign parameters
-        g_shadowSize = 90;
+        // 原 90 产生的 padding 高达约 79px，拉伸时 KWin 每帧都要重合成大片透明
+        // 阴影区域（叠加 blur 后更严重），是窗口拉伸抖动闪烁的主要来源之一，缩小到 24。
+        g_shadowSize = 24;
         g_shadowStrength = 35;
         g_shadowColor = Qt::black;
         const int shadowOverlap = m_frameRadius;
@@ -356,7 +373,8 @@ QPixmap Decoration::fromSvgToPixmap(const QString &file, const QSize &size)
 
 int Decoration::titleBarHeight() const
 {
-    return m_titleBarHeight * m_devicePixelRatio;
+    // KDecoration3 的几何均为设备无关像素，不能乘 PixelRatio（见 init() 注释）。
+    return m_titleBarHeight;
 
     // const QFontMetrics fontMetrics(settings()->font());
     // const int baseUnit = settings()->gridUnit();
